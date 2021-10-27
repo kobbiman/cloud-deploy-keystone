@@ -13,7 +13,7 @@ env:
   GITHUB_REF: ${{ github.ref }} 
   IMAGE: cloud-deploy-keystone
   REGISTRY_HOSTNAME: gcr.io
-  TAG: $(date +%s)
+  TAG: ${{ date +%s }} 
 
 jobs:
   build-and-publish-image:
