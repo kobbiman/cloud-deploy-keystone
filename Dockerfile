@@ -7,7 +7,7 @@ RUN  yarn
 RUN yarn install && yarn build && yarn cache clean
 
 # Runtime container
-FROM node:${NODE_VERSION}-alpine
+FROM node:14-slim
 
 WORKDIR /app
 
