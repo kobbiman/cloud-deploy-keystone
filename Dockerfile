@@ -4,6 +4,14 @@ WORKDIR /app
 
 COPY  . .
 RUN  yarn
-RUN  build
+RUN yarn install && yarn build && yarn cache clean
 
-CMD     ["node", "."]
+# Runtime container
+FROM node:${NODE_VERSION}-alpine
+
+WORKDIR /app
+
+COPY --from=build /app /app
+
+EXPOSE 3000
+CMD ["yarn", "start"]
