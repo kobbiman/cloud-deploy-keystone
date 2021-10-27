@@ -6,14 +6,12 @@ on:
     branches: [ main ]
 
 # Environment variables available to all jobs and steps in this workflow
-#  GKE_EMAIL: ${{ secrets.GKE_EMAIL }} 
-#  GKE_KEY: ${{ secrets.GKE_KEY }} 
 env:
   GITHUB_SHA: ${{ github.sha }} 
   GITHUB_REF: ${{ github.ref }} 
   IMAGE: cloud-deploy-keystone
   REGISTRY_HOSTNAME: gcr.io
-  TAG: ${{ date +%s }} 
+  
 
 jobs:
   build-and-publish-image:
@@ -36,6 +34,7 @@ jobs:
       # Build the Docker image
       - name: Build
         run: |
+          export TAG=$(date +%s)
           echo $TAG
           docker build -t "$REGISTRY_HOSTNAME"/"$IMAGE":"$TAG" \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
@@ -45,7 +44,7 @@ jobs:
       # Push the Docker image to Google Container Registry
       - name: Publish
         run: |
-          export TAG=`echo $GITHUB_REF | awk -F/ '{print $NF}'`
+          export TAG=$(date +%s)
           echo $TAG
           docker push "$REGISTRY_HOSTNAME"/"$IMAGE":"$TAG"
           docker tag "$REGISTRY_HOSTNAME"/"$IMAGE":"$TAG" "$REGISTRY_HOSTNAME"/"$IMAGE":latest
