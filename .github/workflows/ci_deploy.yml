@@ -13,6 +13,7 @@ env:
   GITHUB_REF: ${{ github.ref }} 
   IMAGE: cloud-deploy-keystone
   REGISTRY_HOSTNAME: gcr.io
+  TAG: $(date +%s)
 
 jobs:
   build-and-publish-image:
@@ -35,7 +36,6 @@ jobs:
       # Build the Docker image
       - name: Build
         run: |
-          export TAG=`echo $GITHUB_REF | awk -F/ '{print $NF}'`
           echo $TAG
           docker build -t "$REGISTRY_HOSTNAME"/"$IMAGE":"$TAG" \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
@@ -46,7 +46,7 @@ jobs:
       - name: Publish
         run: |
           export TAG=`echo $GITHUB_REF | awk -F/ '{print $NF}'`
-          # echo $TAG
-          # docker push "$REGISTRY_HOSTNAME"/"$IMAGE":"$TAG"
-          # docker tag "$REGISTRY_HOSTNAME"/"$IMAGE":"$TAG" "$REGISTRY_HOSTNAME"/"$IMAGE":latest
-          # docker push "$REGISTRY_HOSTNAME"/"$IMAGE":latest
+          echo $TAG
+          docker push "$REGISTRY_HOSTNAME"/"$IMAGE":"$TAG"
+          docker tag "$REGISTRY_HOSTNAME"/"$IMAGE":"$TAG" "$REGISTRY_HOSTNAME"/"$IMAGE":latest
+          docker push "$REGISTRY_HOSTNAME"/"$IMAGE":latest
